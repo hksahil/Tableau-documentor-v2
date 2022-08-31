@@ -100,6 +100,6 @@ if uploaded_file is not None:
     if op=="CSV":
         st.download_button("Download",df.to_csv(),file_name="Documentation-csv-output",mime="text/csv")
     else:
-        st.download_button("Download",to_excel(df),file_name="Documentation-excel-output")
+        st.download_button("Download",to_excel(df),file_name="Documentation-excel-output.xlsx")
 st.markdown('---')
 st.markdown('Made with :heart: by [Sahil Choudhary](https://www.sahilchoudhary.ml/)')
