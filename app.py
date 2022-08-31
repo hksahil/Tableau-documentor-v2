@@ -34,8 +34,8 @@ def to_excel(df):
     return processed_data
 
 st.header('Tableau Documentation Made Easy !!')
-st.info('It takes atleast 2 minute to open a Tableau File and copy one calculation from Tableau to Excel.  \nIf you have even 10 calulations, that will take 10*2=20 minutes minimum.')
-st.success('You can do that in seconds using this website!!')
+st.info('It takes atleast 2 minutes to open a Tableau File and copy one calculation from Tableau to Excel.  \nIf you have even 10 calulations, that will take 10*2=20 minutes minimum.')
+st.success('You can do that in seconds with just 1 click using this website!!')
 st.markdown("---")
 st.subheader('Upload your TWB file')
 uploaded_file=st.file_uploader('',type=['twb'],)
