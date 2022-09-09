@@ -34,8 +34,8 @@ def to_excel(df):
     return processed_data
 
 st.header('Tableau Documentation Made Easy !!')
-st.info('It takes atleast 5 clicks (around 2 minutes) to open a Tableau File and copy one calculation from Tableau to Excel.  \nIf you have even 10 calculations, that will take 5*10=50 clicks minimum.')
-st.success('You can do that in seconds with just 1 click using this website!!')
+st.info('It takes atleast 2 minute to open a Tableau File and copy one calculation from Tableau to Excel.  \nIf you have even 10 calulations, that will take 10*2=20 minutes minimum.')
+st.success('You can do that in seconds using this website!!')
 st.markdown("---")
 st.subheader('Upload your TWB file')
 uploaded_file=st.file_uploader('',type=['twb'],)
@@ -44,51 +44,34 @@ if uploaded_file is not None:
     tree=et.parse(uploaded_file)
     root=tree.getroot()
 
-    # create a dictionary of name and tableau generated name
+    # Calculated Fields
+    name = []
+    formula = []
 
-    calcDict = {}
+    # Getting Names of calculated fields
+    for x in root.findall('datasources'):
+        for y in x.findall('datasource'):
+            for z in y.findall('column'):
+                try:
+                    name.append(z.attrib['caption'])
+                except:
+                    print('not allowed')
+                    #name.append(z.attrib['caption'])
 
-    for item in root.findall('.//column[@caption]'):
-        if item.find(".//calculation") is None:
-            continue
-        else:
-            calcDict[item.attrib['name']] = '[' + item.attrib['caption'] + ']'
 
-    # list of calc's name, tableau generated name, and calculation/formula
-    calcList = []
+    # Getting formulas
+    for x in root.findall('datasources'):
+        for y in x.findall('datasource'):
+            for z in y.findall('column'):
+                for al in z.findall('calculation'):
+                    formula.append(al.attrib['formula'])
 
-    for item in root.findall('.//column[@caption]'):
-        if item.find(".//calculation") is None:
-            continue
-        else:
-            if item.find(".//calculation[@formula]") is None:
-                continue
-            else:
-                calc_caption = '[' + item.attrib['caption'] + ']'
-                calc_name = item.attrib['name']
-                calc_raw_formula = item.find(".//calculation").attrib['formula']
-                calc_comment = ''
-                calc_formula = ''
-                for line in calc_raw_formula.split('\r\n'):
-                    if line.startswith('//'):
-                        calc_comment = calc_comment + line + ' '
-                    else:
-                        calc_formula = calc_formula + line + ' '
-                for name, caption in calcDict.items():
-                    calc_formula = calc_formula.replace(name, caption)
 
-                calc_row = (calc_caption, calc_name, calc_formula, calc_comment)
-                calcList.append(list(calc_row))
+    print(len(formula),len(name))
 
-    # convert the list of calcs into a data frame
-    data = calcList
+    # Creating Dataframe
+    df=pd.DataFrame(list(zip(name,formula)),columns=['Calculated Field','Formulae'])
 
-    data = pd.DataFrame(data, columns=['Name', 'Remote Name', 'Formula', 'Comment'])
-
-    # remove duplicate rows from data frame
-    data = data.drop_duplicates(subset=None, keep='first', inplace=False)
-
-    df=data[['Name','Formula']]
     # Showing Dataframe
     st.write(df)
 
@@ -100,6 +83,6 @@ if uploaded_file is not None:
     if op=="CSV":
         st.download_button("Download",df.to_csv(),file_name="Documentation-csv-output",mime="text/csv")
     else:
-        st.download_button("Download",to_excel(df),file_name="Documentation-excel-output.xlsx",mime="application/vnd.ms-excel")
+        st.download_button("Download",to_excel(df),file_name="Documentation-excel-output")
 st.markdown('---')
 st.markdown('Made with :heart: by [Sahil Choudhary](https://www.sahilchoudhary.ml/)')
