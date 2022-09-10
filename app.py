@@ -29,15 +29,15 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 #  which is inside square brackets and push them into new column.Also,duplicates should not be there
 
 def dependent_fields_generator(i):
-    calc_set=set()
     try:
+        calc_set=set()
         pattern=re.compile(r"\[(.*?)\]")
         matches=pattern.finditer(i)
         for match in matches:
             calc_set.add(str(match.group()))
         return str(calc_set).replace('[','').replace(']','').replace('{','').replace('}','').replace("'",'')
     except:
-        return null
+        return None
 # --------- Dependent fields generator from calculation column ends ---------
 
 def to_excel(df):
@@ -107,8 +107,8 @@ if uploaded_file is not None:
     # remove duplicate rows from data frame
     data = data.drop_duplicates(subset=None, keep='first', inplace=False)
 
-    df=data[['Calculated Field','Formula']]
-    df['Base Fields']=[dependent_fields_generator(i) for i in df['Formula']]
+    df=data[['Calculation','Formula']]
+    df['Base Fields']=[str(dependent_fields_generator(i)).replace('set()','').replace(', Parameters','').replace('Parameters,','') for i in df['Formula']]
 
     # Showing Dataframe
     st.write(df)
