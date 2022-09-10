@@ -107,7 +107,7 @@ if uploaded_file is not None:
     # remove duplicate rows from data frame
     data = data.drop_duplicates(subset=None, keep='first', inplace=False)
 
-    df=data[['Calculation','Formula']]
+    df=data[['Calculated Field','Formula']]
     df['Base Fields']=[str(dependent_fields_generator(i)).replace('set()','').replace(', Parameters','').replace('Parameters,','') for i in df['Formula']]
 
     # Showing Dataframe
